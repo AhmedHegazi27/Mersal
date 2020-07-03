@@ -2,6 +2,7 @@ package com.beta27.mersalsellers.info
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,6 +14,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Patterns
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +22,16 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.beta27.mersalsellers.R
 import com.beta27.mersalsellers.databinding.ActivityInfoBinding
+import com.beta27.mersalsellers.home.HomeActivity
 import com.google.android.gms.location.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.*
 
 
@@ -31,7 +42,13 @@ class InfoActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var location: Location
     private var hasLocation: Boolean = false
+    private lateinit var mAuth: FirebaseAuth
     private var hasImage: Boolean = false
+    private val sellersCollectionRef = Firebase.firestore.collection("sellers")
+    private val sellersStorageRef = Firebase.storage.reference
+    private lateinit var fullPhotoUri: Uri
+    private lateinit var seller: Seller
+
     private val LOCATION_PERMISSION: Int = 100
     private val REQUEST_IMAGE_GET: Int = 200
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +68,17 @@ class InfoActivity : AppCompatActivity() {
                 super.onLocationResult(p0)
             }
         }
-        getLocation()
+        val manager =
+            getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
+        if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            getLocation()
+        } else {
+            statusCheck()
+        }
         binding.shopImg.setOnClickListener {
             getImage()
         }
+        mAuth = FirebaseAuth.getInstance()
         binding.button.setOnClickListener {
             if (binding.infoNameEt.text.isEmpty()) {
                 binding.infoNameEt.error = "Enter Your Name"
@@ -77,25 +101,24 @@ class InfoActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please Select an image", Toast.LENGTH_SHORT).show()
 
                 return@setOnClickListener
+            } else if (!this::location.isInitialized) {
+                return@setOnClickListener
             } else {
-                Toast.makeText(this, "done", Toast.LENGTH_SHORT).show()
-            }
+                binding.progressBar.visibility = View.VISIBLE
+                saveData(
+                    mAuth.currentUser?.uid!!, binding.infoNameEt.text.toString()
+                    , binding.infoShopNameEt.text.toString()
+                    , binding.infoPhoneEt.text.toString()
+                    , location.longitude, location.latitude
+                )
 
+            }
         }
 
     }
 
-    fun getAddress(): Address {
 
-        val geoCoder = Geocoder(this, Locale.getDefault())
-        val address = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
-
-
-        return address[0]
-    }
-
-
-    fun showMap(geoLocation: Location) {
+    private fun showMap(geoLocation: Location) {
         // Creates an Intent that will load a map of San Francisco
         val gmmIntentUri = Uri.parse("geo:${geoLocation.latitude},${geoLocation.longitude}?z=20")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -107,7 +130,7 @@ class InfoActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_GET && resultCode == Activity.RESULT_OK) {
-            val fullPhotoUri: Uri = data?.data!!
+            fullPhotoUri = data?.data!!
             hasImage = true
 
             // Do work with photo saved at fullPhotoUri
@@ -180,7 +203,7 @@ class InfoActivity : AppCompatActivity() {
         getLocation()
     }
 
-    fun statusCheck() {
+    private fun statusCheck() {
         val manager =
             getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -199,4 +222,41 @@ class InfoActivity : AppCompatActivity() {
         val alert: AlertDialog = builder.create()
         alert.show()
     }
+
+    private fun saveData(
+        uid: String,
+        name: String,
+        shopName: String,
+        phone: String,
+        longitude: Double,
+        latitude: Double
+    ) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            fullPhotoUri.let {
+                val ref =
+                    sellersStorageRef.child("images/profile/${mAuth.currentUser?.uid}").putFile(it)
+                        .await()
+                val a = ref.storage.downloadUrl.await()
+                val seller = Seller(uid, name, shopName, phone, longitude, latitude, a.toString())
+                sellersCollectionRef.document(uid).set(seller).await()
+                val infoSharedPref = getSharedPreferences("infoShared", Context.MODE_PRIVATE)
+                val editor = infoSharedPref.edit()
+                val pass = editor.putBoolean("pass", true).commit()
+                if (pass) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        binding.progressBar.visibility = View.INVISIBLE
+                    }
+
+                    startActivity(Intent(this@InfoActivity, HomeActivity::class.java))
+                    finish()
+                }
+            }
+        } catch (e: Exception) {
+            CoroutineScope(Dispatchers.Main).launch {
+                binding.progressBar.visibility = View.INVISIBLE
+                Toast.makeText(this@InfoActivity, e.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }

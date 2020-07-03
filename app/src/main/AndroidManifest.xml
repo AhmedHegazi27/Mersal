@@ -13,18 +13,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".products.AddProductActivity"></activity>
+        <activity
+            android:name=".home.HomeActivity"
+            android:screenOrientation="locked"
+            android:theme="@style/AppTheme.Auth" />
         <activity
             android:name=".info.InfoActivity"
-            android:theme="@style/AppTheme.Auth"
-            android:screenOrientation="locked" />
+            android:screenOrientation="locked"
+            android:theme="@style/AppTheme.Auth" />
         <activity
             android:name=".auth.LoginActivity"
-            android:theme="@style/AppTheme.Auth"
-            android:screenOrientation="locked" />
+            android:screenOrientation="locked"
+            android:theme="@style/AppTheme.Auth" />
         <activity
             android:name=".SplashScreenActivity"
-            android:theme="@style/AppTheme.SplashScreen"
-            android:screenOrientation="locked">
+            android:screenOrientation="locked"
+            android:theme="@style/AppTheme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

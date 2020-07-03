@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+
     tools:context=".SplashScreenActivity">
 
 
@@ -14,7 +14,8 @@
         android:drawableStart="@drawable/ic_dove"
         android:fontFamily="@font/rakkas"
         android:text="مرسال"
-        android:textColor="@color/black"
+        android:drawableTint="@color/colorPrimary"
+        android:textColor="@color/colorPrimary"
         android:textSize="75sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

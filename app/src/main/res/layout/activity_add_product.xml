@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        tools:context=".products.AddProductActivity">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:src="@drawable/ic_add_shopping"
+            android:id="@+id/product_image"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:padding="10dp"
+            android:hint="Title"
+            android:id="@+id/title_et"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_title"
+            android:drawablePadding="10dp"
+            android:textSize="20sp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:padding="10dp"
+            android:hint="Description"
+            android:id="@+id/description_et"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_description"
+            android:drawablePadding="10dp"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="20dp"
+            android:id="@+id/category_tv"
+            android:padding="10dp"
+            android:drawableStart="@drawable/ic_list"
+            android:drawableEnd="@drawable/ic_arrow_drop_down"
+            android:inputType="textCapSentences|textMultiLine"
+            android:textSize="20sp"
+            android:hint="Categories" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:padding="10dp"
+            android:inputType="number"
+            android:hint="Quantity"
+            android:id="@+id/quantity_et"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_add_shopping"
+            android:drawablePadding="10dp"
+            android:textSize="20sp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:padding="10dp"
+            android:inputType="numberDecimal"
+            android:hint="Price"
+            android:id="@+id/price_et"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_price"
+            android:drawablePadding="10dp"
+            android:textSize="20sp" />
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Discount"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
+            android:id="@+id/discount_switch" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:hint="Discount Price"
+            android:id="@+id/discount_price_et"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_price"
+            android:drawablePadding="10dp"
+            android:textSize="20sp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:padding="10dp"
+            android:hint="Discount Note 5%OFF"
+            android:id="@+id/discount_note_et"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_price"
+            android:drawablePadding="10dp"
+            android:textSize="20sp" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/save_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black"
+            android:backgroundTint="@color/colorPrimary"
+            android:drawableEnd="@drawable/ic_save"
+            android:drawableTint="@color/black"
+            android:gravity="start|center_vertical"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="Save"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/info_phone_et"
+            app:layout_constraintVertical_bias="0.222" />
+
+
+    </LinearLayout>
+</layout>
